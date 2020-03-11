@@ -44,7 +44,7 @@ class Slider: UISlider {
 		
 		self.addSubview(bigImage)
 		
-		self.bringSubview(toFront: bigImage)
+		self.bringSubviewToFront(bigImage)
 	}
 
     /*
@@ -73,7 +73,7 @@ class Slider: UISlider {
 			y: origin.y - (bigImageSize.height/2 - size.height/2)
 		)
 
-		self.bringSubview(toFront: bigImage)
+		self.bringSubviewToFront(bigImage)
 
 		return unadjustedThumbrect
 	}
