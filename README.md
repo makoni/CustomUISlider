@@ -1,4 +1,4 @@
 # CustomUISlider
-Subclass of UISlider with user interaction animation
+An example of a UISlider subclass of with user interaction animation.
 
-![Custom animated UISlider](https://cdn.jsdelivr.net/gh/makoni/CustomUISlider@04a7cae1/animation.gif "Screenshot")
+<img src="https://raw.githubusercontent.com/makoni/CustomUISlider/master/animation.gif">
