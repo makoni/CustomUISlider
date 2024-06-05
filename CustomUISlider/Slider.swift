@@ -19,13 +19,14 @@ class Slider: UISlider {
 	override var isHighlighted: Bool {
 		didSet {
 			// avoid situation when indicator size didn't count yet
-			guard self.indicatorSize != nil else { return }
+			guard indicatorSize != nil else { return }
 			
-			UIView.animate(withDuration: 0.3) {
-				if self.isHighlighted == true {
-					self.bigImage.transform = CGAffineTransform(scaleX: 2, y: 2)
+			UIView.animate(withDuration: 0.3) { [weak self] in
+				guard let self else { return }
+				if isHighlighted == true {
+					bigImage.transform = CGAffineTransform(scaleX: 2, y: 2)
 				} else {
-					self.bigImage.transform = CGAffineTransform(scaleX: 1, y: 1)
+					bigImage.transform = CGAffineTransform(scaleX: 1, y: 1)
 				}
 			}
 		}
@@ -35,25 +36,17 @@ class Slider: UISlider {
 		super.awakeFromNib()
 		
 		let positionImage = UIImage.circle(diameter: 30, color: UIColor.blue)
-		self.setThumbImage(positionImage, for: .normal)
+		setThumbImage(positionImage, for: .normal)
 		
 		let positionImageBig = UIImage.circle(diameter: 60, color: UIColor.blue)
-		self.bigImage.contentMode = .scaleAspectFit
-		self.bigImage.clipsToBounds = false
-		self.bigImage.image = positionImageBig
+		bigImage.contentMode = .scaleAspectFit
+		bigImage.clipsToBounds = false
+		bigImage.image = positionImageBig
 		
-		self.addSubview(bigImage)
+		addSubview(bigImage)
 		
-		self.bringSubviewToFront(bigImage)
+		bringSubviewToFront(bigImage)
 	}
-
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
 	
 	override func thumbRect(forBounds bounds: CGRect, trackRect rect: CGRect, value: Float) -> CGRect {
 		let unadjustedThumbrect = super.thumbRect(forBounds: bounds, trackRect: rect, value: value)
@@ -61,20 +54,38 @@ class Slider: UISlider {
 		let origin = unadjustedThumbrect.origin
 		let size = unadjustedThumbrect.size
 
-		if self.indicatorSize == nil && unadjustedThumbrect.size.width > 0 {
-			self.bigImage.frame = unadjustedThumbrect
-			self.indicatorSize = size
+		if indicatorSize == nil && unadjustedThumbrect.size.width > 0 {
+			bigImage.frame = unadjustedThumbrect
+			indicatorSize = size
 		}
 
 		let bigImageSize = self.bigImage.frame.size
 
-		self.bigImage.frame.origin = CGPoint(
+		bigImage.frame.origin = CGPoint(
 			x: origin.x - (bigImageSize.width/2 - size.width/2),
 			y: origin.y - (bigImageSize.height/2 - size.height/2)
 		)
 
-		self.bringSubviewToFront(bigImage)
+		bringSubviewToFront(bigImage)
 
 		return unadjustedThumbrect
+	}
+}
+
+extension UIImage {
+	class func circle(diameter: CGFloat, color: UIColor) -> UIImage {
+		UIGraphicsBeginImageContextWithOptions(CGSize(width: diameter, height: diameter), false, 0)
+		let ctx = UIGraphicsGetCurrentContext()
+		ctx!.saveGState()
+
+		let rect = CGRect(x: 0, y: 0, width: diameter, height: diameter)
+		ctx!.setFillColor(color.cgColor)
+		ctx!.fillEllipse(in: rect)
+
+		ctx!.restoreGState()
+		let img = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+
+		return img!
 	}
 }
